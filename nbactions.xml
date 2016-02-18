@@ -26,8 +26,8 @@
                 <goal>package</goal>
             </goals>
             <properties>
-                <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
-                <netbeans.deploy>true</netbeans.deploy>
+                <netbeans.deploy.debugmode>false</netbeans.deploy.debugmode>
+                <netbeans.deploy>false</netbeans.deploy>
                 <netbeans.deploy.clientUrlPart>/homePage.jsp</netbeans.deploy.clientUrlPart>
             </properties>
         </action>

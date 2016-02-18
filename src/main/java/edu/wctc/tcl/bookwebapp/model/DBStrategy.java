@@ -25,6 +25,8 @@ public interface DBStrategy {
     
     public abstract List<Map<String, Object>> findAllRecords(String tableName, int maxRecords) throws SQLException;
     
-    public abstract void deletedSingleRecordFromTable(String DBName, String tableName, String idName, String id) throws SQLException;
+    public abstract int deleteById(String DBName, String tableName, String idName, Object value) throws SQLException;
+    
+    public int updateRecordById(String tableName, List<String> colNames, List<Object> colValues, String pkColName, Object value) throws SQLException;
 }
 

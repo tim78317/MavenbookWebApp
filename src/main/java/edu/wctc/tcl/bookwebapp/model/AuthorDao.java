@@ -24,31 +24,41 @@ public class AuthorDao implements AuthorDaoStrategy {
     private final String USER = "mygamepa_ftrial";
     private final String PSW = "Nalani09";
 
+   @Override
+    public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException {
+        db.openConnection(DRIVER, URL, USER, PSW);
+        int result = db.deleteById("mygamepa_books", "author", "author_id", id);
+        db.closeConnection();
+        return result;
+    }
+
     @Override
     public List<Author> getAuthorList() throws ClassNotFoundException, SQLException {
 
         db.openConnection(DRIVER, URL, USER, PSW);
         List<Map<String, Object>> rawData = db.findAllRecords("author", 10);
         List<Author> authors = new ArrayList<>();
-        
-        for(Map rec : rawData){
+
+        for (Map rec : rawData) {
             Author author = new Author();
-            Integer id = (Integer)rec.get("author_id");
+            Integer id = (Integer) rec.get("author_id");
             author.setAuthorId(id);
             String name = rec.get("author_name") == null ? "" : rec.get("author_name").toString();
             author.setAuthorName(name);
-            Date date = rec.get("date_added") == null ? null : (Date)rec.get("date_added");
+            Date date = rec.get("date_added") == null ? null : (Date) rec.get("date_added");
             author.setDateAdded(date);
             authors.add(author);
         }
-        
+
         db.closeConnection();
         return authors;
     }
+
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        
+
         AuthorDaoStrategy dao = new AuthorDao();
         List<Author> authors = dao.getAuthorList();
         System.out.println(authors);
     }
+
 }

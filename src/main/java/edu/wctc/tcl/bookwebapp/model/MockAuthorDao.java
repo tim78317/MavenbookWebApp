@@ -7,6 +7,7 @@ package edu.wctc.tcl.bookwebapp.model;
  */
 
 
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,5 +62,10 @@ public class MockAuthorDao implements AuthorDaoStrategy{
 
         }
         return aL;
+    }
+
+    @Override
+    public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
