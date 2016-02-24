@@ -5,16 +5,23 @@
  */
 package edu.wctc.tcl.bookwebapp.model;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import model.Author;
 /**
  *
  * @author tliebl
  */
-public class AuthorService {
+@SessionScoped
+public class AuthorService implements Serializable{
+    @Inject
+    private AuthorDaoStrategy dao;
+    
+//    private AuthorDaoStrategy dao = new AuthorDao();
 
-    private AuthorDaoStrategy dao = new AuthorDao();
 
     public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException{
         return dao.deleteAuthorById(id);
@@ -24,9 +31,26 @@ public class AuthorService {
 
         return dao.getAuthorList();
     }
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        AuthorService as = new AuthorService();
-        List<Author> authors = as.getAuthorList();
-        System.out.println(authors);
+    
+    public int updateAuthorById(Object id, String authorName)throws ClassNotFoundException, SQLException{
+        return dao.updateAuthorById(id, authorName);
     }
+    
+    public boolean createNewAuthor(String authorName)throws ClassNotFoundException, SQLException{
+        return dao.insertAuthor(authorName);
+    }
+    
+     public AuthorDaoStrategy getDao() {
+        return dao;
+    }
+
+    public void setDao(AuthorDaoStrategy dao) {
+        this.dao = dao;
+    }
+//    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+//        AuthorService as = new AuthorService();
+////        List<Author> authors = as.getAuthorList();
+//        int result = as.updateAuthorById(3, "Sally Sara");
+//        System.out.println(result);
+//    }
 }

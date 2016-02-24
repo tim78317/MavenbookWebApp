@@ -16,7 +16,15 @@ import model.Author;
 public interface AuthorDaoStrategy {
 
     public abstract List<Author> getAuthorList() throws ClassNotFoundException, SQLException;
-    
-    public abstract int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException; 
-    
+
+    public abstract int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException;
+
+    public int updateAuthorById(Object authorId, String authorName) throws ClassNotFoundException, SQLException;
+
+    public boolean insertAuthor(String authorName) throws SQLException, ClassNotFoundException;
+
+    public DBStrategy getDb();
+
+    public void setDb(DBStrategy db);
+
 }

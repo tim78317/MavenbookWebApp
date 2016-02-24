@@ -7,20 +7,26 @@ package edu.wctc.tcl.bookwebapp.model;
  */
 
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Alternative;
 import model.Author;
 
 /**
  *
  * @author timothy
  */
-public class MockAuthorDao implements AuthorDaoStrategy{
+@Alternative
+@SessionScoped
+public class MockAuthorDao implements AuthorDaoStrategy, Serializable{
 
+    private DBStrategy db;
     private static final DateFormat dF = new SimpleDateFormat("dd/MM/yyyy");
     private static final String strDate1 = "11/06/2007";
     private static final String strDate2 = "09/03/2009";
@@ -36,6 +42,10 @@ public class MockAuthorDao implements AuthorDaoStrategy{
     private static final Author auth2 = new Author();
     private static final Author auth3 = new Author();
     private static final List<Author> aL = new ArrayList<>();
+    
+    public MockAuthorDao(){
+        
+    }
     
     public List<Author> getAuthorList() {
         
@@ -66,6 +76,26 @@ public class MockAuthorDao implements AuthorDaoStrategy{
 
     @Override
     public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int updateAuthorById(Object authorId, String authorName) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean insertAuthor(String authorName) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public DBStrategy getDb() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDb(DBStrategy db) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

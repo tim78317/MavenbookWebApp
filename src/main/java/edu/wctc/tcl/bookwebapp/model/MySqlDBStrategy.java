@@ -5,6 +5,7 @@ package edu.wctc.tcl.bookwebapp.model;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,15 +19,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.enterprise.context.SessionScoped;
 
 /**
  *
  * @author tliebl
  */
-public class MySqlDBStrategy implements DBStrategy {
+@SessionScoped
+public class MySqlDBStrategy implements DBStrategy, Serializable {
 
     private Connection conn;
 
+    public MySqlDBStrategy(){
+        
+    }
+    
     @Override
     public void openConnection(String driverClass, String url,
             String userName, String password) throws ClassNotFoundException, SQLException {
@@ -86,6 +93,7 @@ public class MySqlDBStrategy implements DBStrategy {
         return result;
     }
 
+    @Override
     public int updateRecordById(String tableName, List<String> colNames, List<Object> colValues, String pkColName, Object value) throws SQLException {
 
         PreparedStatement pstmt = null;
@@ -126,6 +134,88 @@ public class MySqlDBStrategy implements DBStrategy {
         return recsUpdated;
     }
 
+    @Override
+    public boolean insertRecord(String tableName, List<String> colNames, List<Object> colValues, boolean closeConnection) throws SQLException {
+
+        PreparedStatement pstmt = null;
+        int recsUpdated = 0;
+
+        // do this in an excpetion handler so that we can depend on the
+        // finally clause to close the connection
+        try {
+            pstmt = buildInsertStatement(conn, tableName, colNames);
+
+            final Iterator i = colValues.iterator();
+            int index = 1;
+
+            while (i.hasNext()) {
+                final Object obj = i.next();
+                if (obj instanceof String) {
+                    pstmt.setString(index++, (String) obj);
+                } else if (obj instanceof Integer) {
+                    pstmt.setInt(index++, ((Integer) obj).intValue());
+                } else if (obj instanceof Long) {
+                    pstmt.setLong(index++, ((Long) obj).longValue());
+                } else if (obj instanceof Double) {
+                    pstmt.setDouble(index++, ((Double) obj).doubleValue());
+                } else if (obj instanceof java.sql.Date) {
+                    pstmt.setDate(index++, (java.sql.Date) obj);
+                } else if (obj instanceof Boolean) {
+                    pstmt.setBoolean(index++, ((Boolean) obj).booleanValue());
+                } else if (obj != null) {
+                    pstmt.setObject(index++, obj);
+                }
+            }
+            recsUpdated = pstmt.executeUpdate();
+
+        } catch (SQLException sqle) {
+            throw sqle;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            try {
+                pstmt.close();
+                if (closeConnection) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                throw e;
+            } // end try
+        } // end finally
+
+        if (recsUpdated == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
+	 * Builds a java.sql.PreparedStatement for an sql insert
+	 * @param conn - a valid connection
+	 * @param tableName - a <code>String</code> representing the table name
+	 * @param colDescriptors - a <code>List</code> containing the column descriptors for
+	 * the fields that can be inserted.
+	 * @return java.sql.PreparedStatement
+	 * @throws SQLException
+     */
+    private PreparedStatement buildInsertStatement(Connection conn_loc, String tableName, List colDescriptors)
+            throws SQLException {
+        StringBuffer sql = new StringBuffer("INSERT INTO ");
+        (sql.append(tableName)).append(" (");
+        final Iterator i = colDescriptors.iterator();
+        while (i.hasNext()) {
+            (sql.append((String) i.next())).append(", ");
+        }
+        sql = new StringBuffer((sql.toString()).substring(0, (sql.toString()).lastIndexOf(", ")) + ") VALUES (");
+        for (int j = 0; j < colDescriptors.size(); j++) {
+            sql.append("?, ");
+        }
+        final String finalSQL = (sql.toString()).substring(0, (sql.toString()).lastIndexOf(", ")) + ")";
+        //System.out.println(finalSQL);
+        return conn_loc.prepareStatement(finalSQL);
+    }
+
     /*
      * Builds a java.sql.PreparedStatement for an sql update using only one where clause test
      * @param conn - a JDBC <code>Connection</code> object
@@ -152,20 +242,22 @@ public class MySqlDBStrategy implements DBStrategy {
         return conn_loc.prepareStatement(finalSQL);
     }
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        DBStrategy db = new MySqlDBStrategy();
-        db.openConnection("com.mysql.jdbc.Driver",
-                "jdbc:mysql://box1090.bluehost.com:3306/mygamepa_books", "mygamepa_ftrial", "Nalani09");
-
-        //List<Map<String, Object>> rawData = db.findAllRecords("author", 10);
-        //db.deleteById("mygamepa_books", "author", "author_id", 4);
-        List<String> colNames = Arrays.asList("author_name", "date_added");
-        List<Object> calValues = Arrays.asList("Sally Amber", "2007-07-07");
-        int result = db.updateRecordById("author", colNames, calValues, "author_id", 3);
-        System.out.println(result);
-        db.closeConnection();
-
-        //System.out.println(rawData);
-    }
+//    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+//        DBStrategy db = new MySqlDBStrategy();
+//        db.openConnection("com.mysql.jdbc.Driver",
+//                "jdbc:mysql://box1090.bluehost.com:3306/mygamepa_books", "mygamepa_ftrial", "Nalani09");
+//
+//        //List<Map<String, Object>> rawData = db.findAllRecords("author", 10);
+//        //db.deleteById("mygamepa_books", "author", "author_id", 4);
+//        List<String> colNames = Arrays.asList("author_name", "date_added");
+//        List<Object> calValues = Arrays.asList("Tom Perry", "1978-07-07");
+//        int result = db.updateRecordById("author", colNames, calValues, "author_id", 2);
+////        boolean r = db.insertRecord("author", colNames, calValues, true);
+//        System.out.println(result);
+//        
+//        db.closeConnection();
+//
+//        //System.out.println(rawData);
+//    }
 
 }

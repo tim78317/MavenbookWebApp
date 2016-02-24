@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,7 +33,9 @@ public class AuthorController extends HttpServlet {
 
     private static final String urlPathForAuthorPage = "/authorPage.jsp";
     private static final String authorPageAttributeName = "authors";
-
+    
+    @Inject
+    private AuthorService authService;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,8 +48,7 @@ public class AuthorController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
-        AuthorService as = new AuthorService();
-        List<Author> author = as.getAuthorList();
+        List<Author> author = authService.getAuthorList();
         request.setAttribute(authorPageAttributeName, author);
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
         dispatcher.forward(request, response);
