@@ -5,12 +5,10 @@
  */
 package edu.wctc.tcl.bookwebapp.controller;
 
+import edu.wctc.tcl.bookwebapp.model.Author;
 import edu.wctc.tcl.bookwebapp.model.AuthorService;
-import edu.wctc.tcl.bookwebapp.model.MockAuthorDao;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,8 +19,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import model.Author;
-
 
 /**
  *
@@ -33,9 +29,17 @@ public class AuthorController extends HttpServlet {
 
     private static final String urlPathForAuthorPage = "/authorPage.jsp";
     private static final String authorPageAttributeName = "authors";
-    
+    private static final String authorPageAttributeNameForFindByID = "findAuthorById";
+
+    // db config init params from web.xml
+    private String driverClass;
+    private String url;
+    private String userName;
+    private String password;
+
     @Inject
     private AuthorService authService;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -44,16 +48,50 @@ public class AuthorController extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException, Exception {
         response.setContentType("text/html;charset=UTF-8");
-        List<Author> author = authService.getAuthorList();
-        request.setAttribute(authorPageAttributeName, author);
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
-        dispatcher.forward(request, response);
-        
 
+        configDbConnection();
+
+        if (request.getParameter("delete") != null) {
+            String id = request.getParameter("check1");
+            int result = authService.deleteAuthorById(id);
+            System.out.println(result);
+
+        } else if (request.getParameter("createAuthorbtn") != null) {
+            String authorName = request.getParameter("createAuthor");
+            boolean r = authService.createNewAuthor(authorName);
+            System.out.println(r);
+        } else if (request.getParameter("updateAuthorbtn") != null) {
+            String authorName = request.getParameter("authorNameField");
+            String id = request.getParameter("idField");
+            int result = authService.updateAuthorById(id, authorName);
+            System.out.println(result);
+        }
+
+        if (request.getParameter("getDetails") != null && request.getParameter("check1") != null) {
+            String id = request.getParameter("check1");
+            List<Author> author = authService.getAuthorList();
+            Author author2 = authService.getAuthorById(id);
+            request.setAttribute(authorPageAttributeName, author);
+            request.setAttribute(authorPageAttributeNameForFindByID, author2);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
+            dispatcher.forward(request, response);
+        } else {
+            List<Author> author = authService.getAuthorList();
+            request.setAttribute(authorPageAttributeName, author);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
+            dispatcher.forward(request, response);
+        }
+
+    }
+
+    private void configDbConnection() {
+        authService.getDao().initDao(driverClass, url, userName, password);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -73,6 +111,8 @@ public class AuthorController extends HttpServlet {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -94,6 +134,8 @@ public class AuthorController extends HttpServlet {
             Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -106,5 +148,20 @@ public class AuthorController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    /**
+     * Called after the constructor is called by the container. This is the
+     * correct place to do one-time initialization.
+     *
+     * @throws ServletException
+     */
+    @Override
+    public void init() throws ServletException {
+        // Get init params from web.xml
+        driverClass = getServletContext().getInitParameter("db.driver.class");
+        url = getServletContext().getInitParameter("db.url");
+        userName = getServletContext().getInitParameter("db.username");
+        password = getServletContext().getInitParameter("db.password");
+    }
 
 }

@@ -10,37 +10,47 @@ import java.sql.SQLException;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import model.Author;
+
 /**
  *
  * @author tliebl
  */
 @SessionScoped
-public class AuthorService implements Serializable{
+public class AuthorService implements Serializable {
+
     @Inject
     private AuthorDaoStrategy dao;
-    
+
 //    private AuthorDaoStrategy dao = new AuthorDao();
+    /**
+     * default constructor required for injectable objects
+     */
+    public AuthorService() {
 
+    }
 
-    public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException{
+    public Author getAuthorById(String authorId) throws Exception, SQLException {
+        return dao.getAuthorById(Integer.parseInt(authorId));
+    }
+
+    public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException {
         return dao.deleteAuthorById(id);
     }
-    
+
     public List<Author> getAuthorList() throws ClassNotFoundException, SQLException {
 
         return dao.getAuthorList();
     }
-    
-    public int updateAuthorById(Object id, String authorName)throws ClassNotFoundException, SQLException{
+
+    public int updateAuthorById(Object id, String authorName) throws ClassNotFoundException, SQLException {
         return dao.updateAuthorById(id, authorName);
     }
-    
-    public boolean createNewAuthor(String authorName)throws ClassNotFoundException, SQLException{
+
+    public boolean createNewAuthor(String authorName) throws ClassNotFoundException, SQLException {
         return dao.insertAuthor(authorName);
     }
-    
-     public AuthorDaoStrategy getDao() {
+
+    public AuthorDaoStrategy getDao() {
         return dao;
     }
 

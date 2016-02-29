@@ -7,7 +7,7 @@ package edu.wctc.tcl.bookwebapp.model;
 
 import java.sql.SQLException;
 import java.util.List;
-import model.Author;
+import java.util.Map;
 
 /**
  *
@@ -22,9 +22,29 @@ public interface AuthorDaoStrategy {
     public int updateAuthorById(Object authorId, String authorName) throws ClassNotFoundException, SQLException;
 
     public boolean insertAuthor(String authorName) throws SQLException, ClassNotFoundException;
+    
+    public Author getAuthorById(Integer authorId)throws SQLException, Exception;
 
     public DBStrategy getDb();
 
     public void setDb(DBStrategy db);
+    
+    public void initDao(String driver, String url, String user, String password);
+    
+    public String getDriver();
+    
+    public void setDriver(String driver);
+    
+    public String getUrl();
+
+    public void setUrl(String url);
+
+    public String getUser();
+
+    public void setUser(String user);
+
+    public String getPwd();
+
+    public void setPwd(String pwd);
 
 }
