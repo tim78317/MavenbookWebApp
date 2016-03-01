@@ -30,7 +30,15 @@ public class AuthorController extends HttpServlet {
     private static final String urlPathForAuthorPage = "/authorPage.jsp";
     private static final String authorPageAttributeName = "authors";
     private static final String authorPageAttributeNameForFindByID = "findAuthorById";
-
+    private static final String DELETE_BUTTON = "delete";
+    private static final String ID_CHECKBOX = "check1";
+    private static final String CREATE_AUTHOR_BTN = "createAuthorbtn";
+    private static final String CREATE_AUTHOR = "createAuthor";
+    private static final String UPDATE_AUTHOR_BTN = "updateAuthorbtn";
+    private static final String AUTHOR_NAME_FIELD = "authorNameField";
+    private static final String ID_FIELD = "idField";
+    private static final String GET_DETAILS = "getDetails";
+             
     // db config init params from web.xml
     private String driverClass;
     private String url;
@@ -57,24 +65,24 @@ public class AuthorController extends HttpServlet {
 
         configDbConnection();
 
-        if (request.getParameter("delete") != null) {
-            String id = request.getParameter("check1");
+        if (request.getParameter(DELETE_BUTTON) != null) {
+            String id = request.getParameter(ID_CHECKBOX);
             int result = authService.deleteAuthorById(id);
             System.out.println(result);
 
-        } else if (request.getParameter("createAuthorbtn") != null) {
-            String authorName = request.getParameter("createAuthor");
+        } else if (request.getParameter(CREATE_AUTHOR_BTN) != null) {
+            String authorName = request.getParameter(CREATE_AUTHOR);
             boolean r = authService.createNewAuthor(authorName);
             System.out.println(r);
-        } else if (request.getParameter("updateAuthorbtn") != null) {
-            String authorName = request.getParameter("authorNameField");
-            String id = request.getParameter("idField");
+        } else if (request.getParameter(UPDATE_AUTHOR_BTN) != null) {
+            String authorName = request.getParameter(AUTHOR_NAME_FIELD);
+            String id = request.getParameter(ID_FIELD);
             int result = authService.updateAuthorById(id, authorName);
             System.out.println(result);
         }
 
-        if (request.getParameter("getDetails") != null && request.getParameter("check1") != null) {
-            String id = request.getParameter("check1");
+        if (request.getParameter(GET_DETAILS) != null && request.getParameter(ID_CHECKBOX) != null) {
+            String id = request.getParameter(ID_CHECKBOX);
             List<Author> author = authService.getAuthorList();
             Author author2 = authService.getAuthorById(id);
             request.setAttribute(authorPageAttributeName, author);
