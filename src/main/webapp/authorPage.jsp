@@ -50,7 +50,10 @@
                 </nav>
             </div>
         </div>
+        
+        <h4>${welcomeNameForAuthorPage}</h4>
         <form id="tableForm1" name="tableForm1" action="AuthorController" method="POST">
+            <button type="sumbit" name="endSession" id="endSession">End Current Session</button>
             <div class="container-fluid">
                 <!-- main content -->
                 <div class="page-header">Authors Table</div>
@@ -89,7 +92,7 @@
                                 <tr>
                                     <td>
                                         <input type="checkbox" name="check1" id="check1" class="checkbox" value="${auth.authorId}">
-   
+
                                     </td>
                                     <td>${auth.authorId}</td>
                                     <td>${auth.authorName}</td>
@@ -100,10 +103,6 @@
                         <div class="table-foot muffin">	
 
                             <div class="pull-left">
-                                <div class="btn-group">
-                                    <button id="tab_1_unselect" class="btn btn-default" type="button"><i class="icon-remove-circle"></i></button>
-                                    <button id="selectall" class="btn btn-default" type="button">All</button>
-                                </div>
 
                                 <div class="btn-group">
                                     <button id="add" class="btn btn-primary btn-default" name="addButton" type="button" data-toggle="modal" data-target="#myModalAdd">Add</button>
@@ -131,7 +130,6 @@
                                 <div class="btn-group">
                                     <button id="getDetails" class="btn btn-warning btn-default" name="getDetails" type="submit">Edit</button>
                                     <button id="delete" name="delete" class="btn btn-danger btn-default" type="submit">Delete</button>
-                                     <input type="button" name="editDetails" id="editDetails" class="btn btn-default" data-toggle="modal" data-target="#myModalUpdate" value="Edit Details"/>
                                 </div>	
                                 <!-- Modal For Update-->
                                 <div id="forHidden" class="hidden">
@@ -187,21 +185,24 @@
         <script>
 
             $(function () {
-
+            
+                
                 $("#draggable").draggable();
 
+                enableDisableEditModal();
 
-                $("#editDetails").click(function () {
-                  
+                  function enableDisableEditModal() {
+                      var test = $("#authorNameField").val();
+                   if(test !== ""){
                        $("#forHidden").removeClass('hidden');
-                    
-                });
-                
+                   } 
+                }
+
                 $("#hiddenClose").click(function () {
                     $("#forHidden").addClass('hidden');
                 });
-                
-                
+
+
 
             });
 

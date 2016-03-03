@@ -19,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -62,7 +63,7 @@ public class AuthorController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException, Exception {
         response.setContentType("text/html;charset=UTF-8");
-
+        HttpSession session = request.getSession();
         configDbConnection();
 
         if (request.getParameter(DELETE_BUTTON) != null) {
@@ -90,12 +91,25 @@ public class AuthorController extends HttpServlet {
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
             dispatcher.forward(request, response);
         } else {
+            String welcomeName = request.getParameter("welcomeName");
+            if(welcomeName != null){
+            String welcomeNameForSession = "Welcome " + welcomeName + ", On This Page You Can Add, Edit, Or Delete Authors.";
+            session.setAttribute("welcomeNameForAuthorPage", welcomeNameForSession);
+            }else {
+                String endSessionWelcome = "Your Session Has Ended. Please Return to the Home Screen.";
+                session.setAttribute("welcomeNameForAuthorPage", endSessionWelcome);
+            }
             List<Author> author = authService.getAuthorList();
             request.setAttribute(authorPageAttributeName, author);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
             dispatcher.forward(request, response);
         }
 
+        if(request.getParameter("endSession") != null){
+            session.invalidate();
+        }else{
+            
+        }
     }
 
     private void configDbConnection() {
