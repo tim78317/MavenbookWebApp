@@ -10,6 +10,7 @@ package edu.wctc.tcl.bookwebapp.model;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import javax.sql.DataSource;
 
 /**
  *
@@ -33,5 +34,6 @@ public interface DBStrategy {
     
      Map<String, Object> findById(String tableName, String primaryKeyFieldName,
             Object primaryKeyValue)throws SQLException, Exception;
+      public abstract void openConnection(DataSource ds) throws Exception;
 }
 

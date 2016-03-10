@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
+import javax.sql.DataSource;
 
 
 /**
@@ -33,6 +34,21 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
 
     public MySqlDBStrategy(){
         
+    }
+    
+    
+     /**
+     * Open a connection using a connection pool configured on server.
+     *
+     * @param ds - a reference to a connection pool via a JNDI name, producing
+     * this object. Typically done in a servlet using InitalContext object.
+     * @throws Exception - if ds cannot be established.
+     */
+    @Override
+    public final void openConnection(DataSource ds) throws Exception {
+        
+            conn = ds.getConnection();
+       
     }
     
     @Override
@@ -292,7 +308,7 @@ public class MySqlDBStrategy implements DBStrategy, Serializable {
 //        List<String> colNames = Arrays.asList("author_name", "date_added");
 //        List<Object> calValues = Arrays.asList("Tom Perry", "1978-07-07");
 //        int result = db.updateRecordById("author", colNames, calValues, "author_id", 2);
-////        boolean r = db.insertRecord("author", colNames, calValues, true);
+//        boolean r = db.insertRecord("author", colNames, calValues, true);
 //        System.out.println(result);
 //        
 //        db.closeConnection();

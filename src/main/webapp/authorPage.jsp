@@ -27,32 +27,10 @@
         <link href="resources/style/muffin-table.css" rel="stylesheet"> 
     </head>
     <body>
-        <div class="navbar-wrapper">
-            <div class="container">
-                <nav class="navbar navbar-inverse navbar-static-top">
-                    <div class="container">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="homePage.jsp">Book Web App</a>
-                        </div>
-                        <div id="navbar" class="navbar-collapse collapse">
-                            <ul class="nav navbar-nav">
-                                <li class=""><a href="homePage.jsp">Home</a></li>
-                                <li class="Active"><a href="#">Author Page</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </div>
+       <jsp:include page="navbarforauthor.jsp"/>
         
         <h4>${welcomeNameForAuthorPage}</h4>
-        <form id="tableForm1" name="tableForm1" action="AuthorController" method="POST">
+        <form id="tableForm1" name="tableForm1" action="<%=response.encodeURL("AuthorController")%>" method="POST">
             <button type="sumbit" name="endSession" id="endSession">End Current Session</button>
             <div class="container-fluid">
                 <!-- main content -->

@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 /**
  *
@@ -39,12 +43,13 @@ public class AuthorController extends HttpServlet {
     private static final String AUTHOR_NAME_FIELD = "authorNameField";
     private static final String ID_FIELD = "idField";
     private static final String GET_DETAILS = "getDetails";
-             
+
     // db config init params from web.xml
     private String driverClass;
     private String url;
     private String userName;
     private String password;
+    private String dbJndiName;
 
     @Inject
     private AuthorService authService;
@@ -63,7 +68,7 @@ public class AuthorController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, SQLException, Exception {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
+
         configDbConnection();
 
         if (request.getParameter(DELETE_BUTTON) != null) {
@@ -91,29 +96,35 @@ public class AuthorController extends HttpServlet {
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
             dispatcher.forward(request, response);
         } else {
-            String welcomeName = request.getParameter("welcomeName");
-            if(welcomeName != null){
-            String welcomeNameForSession = "Welcome " + welcomeName + ", On This Page You Can Add, Edit, Or Delete Authors.";
-            session.setAttribute("welcomeNameForAuthorPage", welcomeNameForSession);
-            }else {
+                HttpSession session = request.getSession();
+            if (request.getParameter("welcomeName") != null) {
+                String welcomeName = request.getParameter("welcomeName");
+                String welcomeNameForSession = "Welcome " + welcomeName + ", On This Page You Can Add, Edit, Or Delete Authors.";
+                session.setAttribute("welcomeNameForAuthorPage", welcomeNameForSession);
+            } else if (request.getParameter("endSession") != null) {
                 String endSessionWelcome = "Your Session Has Ended. Please Return to the Home Screen.";
                 session.setAttribute("welcomeNameForAuthorPage", endSessionWelcome);
             }
             List<Author> author = authService.getAuthorList();
             request.setAttribute(authorPageAttributeName, author);
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(response.encodeRedirectURL(urlPathForAuthorPage));
             dispatcher.forward(request, response);
         }
 
-        if(request.getParameter("endSession") != null){
-            session.invalidate();
-        }else{
-            
-        }
     }
 
-    private void configDbConnection() {
-        authService.getDao().initDao(driverClass, url, userName, password);
+    private void configDbConnection() throws NamingException, Exception {
+        if (dbJndiName == null) {
+            authService.getDao().initDao(driverClass, url, userName, password);
+        } else {
+            /*
+             Lookup the JNDI name of the Glassfish connection pool
+             and then use it to create a DataSource object.
+             */
+            Context ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup(dbJndiName);
+            authService.getDao().initDao(ds);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -180,10 +191,11 @@ public class AuthorController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         // Get init params from web.xml
-        driverClass = getServletContext().getInitParameter("db.driver.class");
-        url = getServletContext().getInitParameter("db.url");
-        userName = getServletContext().getInitParameter("db.username");
-        password = getServletContext().getInitParameter("db.password");
+//        driverClass = getServletContext().getInitParameter("db.driver.class");
+//        url = getServletContext().getInitParameter("db.url");
+//        userName = getServletContext().getInitParameter("db.username");
+//        password = getServletContext().getInitParameter("db.password");
+        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
     }
 
 }

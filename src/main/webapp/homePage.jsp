@@ -18,33 +18,10 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous"> 
     </head>
     <body>
-        <div class="navbar-wrapper">
-            <div class="container">
-
-                <nav class="navbar navbar-inverse navbar-static-top">
-                    <div class="container">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="homePage.jsp">Book Web App</a>
-                        </div>
-                        <div id="navbar" class="navbar-collapse collapse">
-                            <ul class="nav navbar-nav">
-                                <li class="active"><a href="homePage.jsp">Home</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-
-            </div>
-        </div>
+      <jsp:include page="navbarforhome.jsp"/>
         <div class="container">
             <h1 id="titleHead">View Authors</h1>
-            <form id="authForm" name="authForm" action="AuthorController" method="POST">
+            <form id="authForm" name="authForm" action="<%=response.encodeURL("AuthorController")%>" method="POST">
                 <input type="text" id="welcomeName" name="welcomeName" placeholder="Please Enter Your Name"/>
                 <button type="button" id="welcomeButton" class="btn btn-large btn-primary" name="welcomeButton">Continue To Authors List</button>
                 <input type="submit" class="btn btn-large btn-success hidden" id="authorLink" name="authorLink" value="View Authors"/>

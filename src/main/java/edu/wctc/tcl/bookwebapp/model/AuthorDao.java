@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.sql.DataSource;
 
 /**
  *
@@ -26,6 +27,7 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     private DBStrategy db;
 
 //    private DBStrategy db = new MySqlDBStrategy();
+    private DataSource ds;
     private String driver;
     private String url;
     private String user;
@@ -33,6 +35,11 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
 
     public AuthorDao() {
 
+    }
+    
+    @Override
+    public void initDao(DataSource ds) throws Exception {
+        setDs(ds);
     }
 
     @Override
@@ -44,17 +51,25 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     }
 
     @Override
-    public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException {
-        db.openConnection(driver, url, user, pwd);
+    public int deleteAuthorById(Object id) throws ClassNotFoundException, SQLException, Exception {
+         if(ds == null) {
+            db.openConnection(driver, url, user, pwd);
+        } else {
+            db.openConnection(ds);
+        }
         int result = db.deleteById("mygamepa_books", "author", "author_id", id);
         db.closeConnection();
         return result;
     }
 
     @Override
-    public List<Author> getAuthorList() throws ClassNotFoundException, SQLException {
+    public List<Author> getAuthorList() throws ClassNotFoundException, SQLException, Exception {
 
-        db.openConnection(driver, url, user, pwd);
+         if(ds == null) {
+            db.openConnection(driver, url, user, pwd);
+        } else {
+            db.openConnection(ds);
+        }
         List<Map<String, Object>> rawData = db.findAllRecords("author", 10);
         List<Author> authors = new ArrayList<>();
 
@@ -74,23 +89,35 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
     }
 
     @Override
-    public int updateAuthorById(Object authorId, String authorName) throws SQLException, ClassNotFoundException {
-        db.openConnection(driver, url, user, pwd);
+    public int updateAuthorById(Object authorId, String authorName) throws SQLException, ClassNotFoundException, Exception {
+         if(ds == null) {
+            db.openConnection(driver, url, user, pwd);
+        } else {
+            db.openConnection(ds);
+        }
         int result = db.updateRecordById("author", Arrays.asList("author_name"), Arrays.asList(authorName), "author_id", authorId);
         db.closeConnection();
         return result;
     }
 
     @Override
-    public boolean insertAuthor(String authorName) throws SQLException, ClassNotFoundException {
-        db.openConnection(driver, url, user, pwd);
+    public boolean insertAuthor(String authorName) throws SQLException, ClassNotFoundException, Exception {
+         if(ds == null) {
+            db.openConnection(driver, url, user, pwd);
+        } else {
+            db.openConnection(ds);
+        }
         boolean r = db.insertRecord("author", Arrays.asList("author_name", "date_added"), Arrays.asList(authorName, new Date()), true);
         return r;
     }
 
     @Override
      public Author getAuthorById(Integer authorId)throws SQLException, Exception {
-        db.openConnection(driver, url, user, pwd);
+         if(ds == null) {
+            db.openConnection(driver, url, user, pwd);
+        } else {
+            db.openConnection(ds);
+        }
         
         Map<String,Object> rawRec = db.findById("author", "author_id", authorId);
         Author author = new Author();
@@ -160,4 +187,13 @@ public class AuthorDao implements AuthorDaoStrategy, Serializable {
         this.pwd = psw;
     }
 
+    public DataSource getDs() {
+        return ds;
+    }
+
+    public void setDs(DataSource ds) {
+        this.ds = ds;
+    }
+
+    
 }
