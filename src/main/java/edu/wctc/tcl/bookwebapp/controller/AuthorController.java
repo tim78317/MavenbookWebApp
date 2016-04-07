@@ -6,16 +6,13 @@
 package edu.wctc.tcl.bookwebapp.controller;
 
 import edu.wctc.tcl.bookwebapp.model.Author;
-import edu.wctc.tcl.bookwebapp.model.AuthorService;
+import edu.wctc.tcl.bookwepapp.ejb.AuthorFacade;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
+
 
 /**
  *
@@ -45,14 +42,14 @@ public class AuthorController extends HttpServlet {
     private static final String GET_DETAILS = "getDetails";
 
     // db config init params from web.xml
-    private String driverClass;
-    private String url;
-    private String userName;
-    private String password;
-    private String dbJndiName;
+//    private String driverClass;
+//    private String url;
+//    private String userName;
+//    private String password;
+//    private String dbJndiName;
 
     @Inject
-    private AuthorService authService;
+    private AuthorFacade authService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -69,28 +66,24 @@ public class AuthorController extends HttpServlet {
             throws ServletException, IOException, ClassNotFoundException, SQLException, Exception {
         response.setContentType("text/html;charset=UTF-8");
 
-        configDbConnection();
+       
 
         if (request.getParameter(DELETE_BUTTON) != null) {
             String id = request.getParameter(ID_CHECKBOX);
-            int result = authService.deleteAuthorById(id);
-            System.out.println(result);
-
+            authService.deleteAuthorById(id);
         } else if (request.getParameter(CREATE_AUTHOR_BTN) != null) {
             String authorName = request.getParameter(CREATE_AUTHOR);
-            boolean r = authService.createNewAuthor(authorName);
-            System.out.println(r);
+           authService.createNewAuthor(authorName);
         } else if (request.getParameter(UPDATE_AUTHOR_BTN) != null) {
             String authorName = request.getParameter(AUTHOR_NAME_FIELD);
             String id = request.getParameter(ID_FIELD);
-            int result = authService.updateAuthorById(id, authorName);
-            System.out.println(result);
+            authService.updateAuthorById(id, authorName);
         }
 
         if (request.getParameter(GET_DETAILS) != null && request.getParameter(ID_CHECKBOX) != null) {
             String id = request.getParameter(ID_CHECKBOX);
-            List<Author> author = authService.getAuthorList();
-            Author author2 = authService.getAuthorById(id);
+            List<Author> author = authService.findAll();
+            Author author2 = authService.find(new Integer(id));
             request.setAttribute(authorPageAttributeName, author);
             request.setAttribute(authorPageAttributeNameForFindByID, author2);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
@@ -105,7 +98,7 @@ public class AuthorController extends HttpServlet {
                 String endSessionWelcome = "Your Session Has Ended. Please Return to the Home Screen.";
                 session.setAttribute("welcomeNameForAuthorPage", endSessionWelcome);
             }
-            List<Author> author = authService.getAuthorList();
+            List<Author> author = authService.findAll();
             request.setAttribute(authorPageAttributeName, author);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(response.encodeRedirectURL(urlPathForAuthorPage));
             dispatcher.forward(request, response);
@@ -113,19 +106,19 @@ public class AuthorController extends HttpServlet {
 
     }
 
-    private void configDbConnection() throws NamingException, Exception {
-        if (dbJndiName == null) {
-            authService.getDao().initDao(driverClass, url, userName, password);
-        } else {
-            /*
-             Lookup the JNDI name of the Glassfish connection pool
-             and then use it to create a DataSource object.
-             */
-            Context ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup(dbJndiName);
-            authService.getDao().initDao(ds);
-        }
-    }
+//    private void configDbConnection() throws NamingException, Exception {
+//        if (dbJndiName == null) {
+//            authService.getDao().initDao(driverClass, url, userName, password);
+//        } else {
+//            /*
+//             Lookup the JNDI name of the Glassfish connection pool
+//             and then use it to create a DataSource object.
+//             */
+//            Context ctx = new InitialContext();
+//            DataSource ds = (DataSource) ctx.lookup(dbJndiName);
+//            authService.getDao().initDao(ds);
+//        }
+//    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -195,7 +188,7 @@ public class AuthorController extends HttpServlet {
 //        url = getServletContext().getInitParameter("db.url");
 //        userName = getServletContext().getInitParameter("db.username");
 //        password = getServletContext().getInitParameter("db.password");
-        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
+        //dbJndiName = getServletContext().getInitParameter("db.jndi.name");
     }
 
 }
