@@ -18,13 +18,19 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous"> 
     </head>
     <body>
-      <jsp:include page="navbarforhome.jsp"/>
+        <jsp:include page="navbarforhome.jsp"/>
         <div class="container">
-            <h1 id="titleHead">View Authors</h1>
+              <h1 id="titleHeadAuthor">View Authors</h1>
             <form id="authForm" name="authForm" action="<%=response.encodeURL("AuthorController")%>" method="POST">
-                <input type="text" id="welcomeName" name="welcomeName" placeholder="Please Enter Your Name"/>
-                <button type="button" id="welcomeButton" class="btn btn-large btn-primary" name="welcomeButton">Continue To Authors List</button>
+                <input type="text" id="welcomeNameAuthor" name="welcomeNameAuthor" placeholder="Please Enter Your Name"/>
+                <button type="button" id="welcomeButtonAuthor" class="btn btn-large btn-primary" name="welcomeButtonAuthor">Continue To Authors List</button>
                 <input type="submit" class="btn btn-large btn-success hidden" id="authorLink" name="authorLink" value="View Authors"/>
+            </form>
+            <h1 id="titleHeadBook">View Books</h1>
+            <form id="bookForm" name="bookForm" action="<%=response.encodeURL("BookController")%>" method="POST">
+                <input type="text" id="welcomeNameBook" name="welcomeNameBook" placeholder="Please Enter Your Name"/>
+                <button type="button" id="welcomeButtonBook" class="btn btn-large btn-primary" name="welcomeButtonBook">Continue To Books List</button>
+                <input type="submit" class="btn btn-large btn-success hidden" id="bookLink" name="bookLink" value="View Books"/>
             </form>
         </div>
         <!-- Latest compiled and minified JavaScript -->
@@ -34,15 +40,28 @@
         <script>
             $(function () {
 
-                $('#welcomeButton').click(function () {
-                    var test = $('#welcomeName').val();
+                $('#welcomeButtonAuthor').click(function () {
+                    var test = $('#welcomeNameAuthor').val();
                     if (test !== "") {
                         $('#authorLink').removeClass('hidden');
-                        $('#welcomeName').hide(300);
-                        $('#welcomeButton').hide(300);
-                        $('#titleHead').html(test + ", Click View Authors to Continue");
+                        $('#welcomeNameAuthor').hide(300);
+                        $('#welcomeButtonAuthor').hide(300);
+                        $('#titleHeadAuthor').html(test + ", Click View Authors to Continue");
                     } else {
-                        $('#titleHead').html("Please Enter Your Name To Continue");
+                        $('#titleHeadAuthor').html("Please Enter Your Name To Continue");
+                    }
+
+                });
+                
+                 $('#welcomeButtonBook').click(function () {
+                    var test = $('#welcomeNameBook').val();
+                    if (test !== "") {
+                        $('#bookLink').removeClass('hidden');
+                        $('#welcomeNameBook').hide(300);
+                        $('#welcomeButtonBook').hide(300);
+                        $('#titleHeadBook').html(test + ", Click View Books to Continue");
+                    } else {
+                        $('#titleHeadBook').html("Please Enter Your Name To Continue");
                     }
 
                 });
