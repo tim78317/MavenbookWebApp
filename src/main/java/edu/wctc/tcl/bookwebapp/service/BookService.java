@@ -63,11 +63,13 @@ public class BookService {
      * rollback if something goes wrong.
      *
      * @param id
-     * @param name
+     * @param title
+     * @param isbn
+     * @param authorId
      */
     @Transactional
     public void updateAuthorById(String id, String title, String isbn, String authorId) {
-        Book book = new Book();
+        Book book = null;
         Author auth = null;
         book = bookRepo.findOne(new Integer(id));
         book.setBookId(new Integer(id));

@@ -82,7 +82,7 @@ public class AuthorService {
      */
     @Transactional
     public void updateAuthorById(String id, String name) {
-        Author auth = new Author();
+        Author auth = null;
         auth = authorRepo.findOne(new Integer(id));
         auth.setAuthorId(new Integer(id));
         auth.setAuthorName(name);
