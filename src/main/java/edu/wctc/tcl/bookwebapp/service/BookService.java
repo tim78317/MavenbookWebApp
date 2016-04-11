@@ -69,11 +69,13 @@ public class BookService {
     public void updateAuthorById(String id, String title, String isbn, String authorId) {
         Book book = new Book();
         Author auth = null;
+        book = bookRepo.findOne(new Integer(id));
         book.setBookId(new Integer(id));
         book.setTitle(title);
         book.setIsbn(isbn);
         auth = authorRepo.findOne(new Integer(authorId));
         book.setAuthorId(auth);
+        bookRepo.saveAndFlush(book);
     }
 
     @Transactional
@@ -84,6 +86,7 @@ public class BookService {
         book.setIsbn(isbn);
         auth = authorRepo.findOne(new Integer(authorId));
         book.setAuthorId(auth);
+        bookRepo.saveAndFlush(book);
     }
 
 }

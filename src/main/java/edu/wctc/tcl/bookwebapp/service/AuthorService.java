@@ -83,8 +83,10 @@ public class AuthorService {
     @Transactional
     public void updateAuthorById(String id, String name) {
         Author auth = new Author();
+        auth = authorRepo.findOne(new Integer(id));
         auth.setAuthorId(new Integer(id));
         auth.setAuthorName(name);
+        authorRepo.saveAndFlush(auth);
     }
     
      @Transactional
@@ -92,5 +94,6 @@ public class AuthorService {
        Author auth = new Author(0);
        auth.setAuthorName(name);
        auth.setDateAdded(new Date());
+       authorRepo.saveAndFlush(auth);
     }
 }
