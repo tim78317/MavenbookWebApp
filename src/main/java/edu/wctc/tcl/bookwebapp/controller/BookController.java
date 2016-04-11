@@ -7,18 +7,21 @@ package edu.wctc.tcl.bookwebapp.controller;
 
 import edu.wctc.tcl.bookwebapp.model.Author;
 import edu.wctc.tcl.bookwebapp.model.Book;
-import edu.wctc.tcl.bookwepapp.ejb.BookFacade;
+import edu.wctc.tcl.bookwebapp.service.AuthorService;
+import edu.wctc.tcl.bookwebapp.service.BookService;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -43,8 +46,14 @@ public class BookController extends HttpServlet {
     private static final String ID_FIELD = "idField";
     private static final String GET_DETAILS = "getDetails";
 
-    @Inject
-    private BookFacade bookService;
+    // When using Spring you cannot use @Inject because Spring has no
+    // control over Servlets. Therefore you must have the Servlet ask
+    // Spring for the object to inject (see init() method)
+//    @Inject
+
+    // DO THIS INSTEAD (see init() method):
+    private BookService bookService;
+    private AuthorService authService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -60,7 +69,7 @@ public class BookController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         if (request.getParameter(DELETE_BUTTON) != null) {
             String id = request.getParameter(ID_CHECKBOX);
-            bookService.deleteAuthorById(id);
+            bookService.deleteBookById(id);
         } else if (request.getParameter(CREATE_AUTHOR_BTN) != null) {
             String title = request.getParameter(CREATE_BOOK_TITLE);
             String isbn = request.getParameter(CREATE_BOOK_ISBN);
@@ -77,7 +86,7 @@ public class BookController extends HttpServlet {
         if (request.getParameter(GET_DETAILS) != null && request.getParameter(ID_CHECKBOX) != null) {
             String id = request.getParameter(ID_CHECKBOX);
             List<Book> book = bookService.findAll();
-            Book book2 = bookService.find(new Integer(id));
+            Book book2 = bookService.findById(id);
             request.setAttribute(bookPageAttributeName, book);
             request.setAttribute(bookPageAttributeNameForFindByID, book2);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForBookPage);
@@ -141,11 +150,11 @@ public class BookController extends HttpServlet {
 
      @Override
     public void init() throws ServletException {
-        // Get init params from web.xml
-//        driverClass = getServletContext().getInitParameter("db.driver.class");
-//        url = getServletContext().getInitParameter("db.url");
-//        userName = getServletContext().getInitParameter("db.username");
-//        password = getServletContext().getInitParameter("db.password");
-        //dbJndiName = getServletContext().getInitParameter("db.jndi.name");
+      // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authService = (AuthorService) ctx.getBean("authorService");
+        bookService = (BookService) ctx.getBean("bookService");
     }
 }

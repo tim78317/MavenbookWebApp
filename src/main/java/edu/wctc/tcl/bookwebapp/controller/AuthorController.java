@@ -6,20 +6,22 @@
 package edu.wctc.tcl.bookwebapp.controller;
 
 import edu.wctc.tcl.bookwebapp.model.Author;
-import edu.wctc.tcl.bookwepapp.ejb.AuthorFacade;
+import edu.wctc.tcl.bookwebapp.service.AuthorService;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 
 /**
@@ -40,17 +42,15 @@ public class AuthorController extends HttpServlet {
     private static final String AUTHOR_NAME_FIELD = "authorNameField";
     private static final String ID_FIELD = "idField";
     private static final String GET_DETAILS = "getDetails";
-
-    // db config init params from web.xml
-//    private String driverClass;
-//    private String url;
-//    private String userName;
-//    private String password;
-//    private String dbJndiName;
-
-    @Inject
-    private AuthorFacade authService;
-
+    
+    
+// When using Spring you cannot use @Inject because Spring has no
+    // control over Servlets. Therefore you must have the Servlet ask
+    // Spring for the object to inject
+//    @Inject
+    
+    // DO THIS INSTEAD (see init() method):
+    private AuthorService authService;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -83,7 +83,7 @@ public class AuthorController extends HttpServlet {
         if (request.getParameter(GET_DETAILS) != null && request.getParameter(ID_CHECKBOX) != null) {
             String id = request.getParameter(ID_CHECKBOX);
             List<Author> author = authService.findAll();
-            Author author2 = authService.find(new Integer(id));
+            Author author2 = authService.findById(id);
             request.setAttribute(authorPageAttributeName, author);
             request.setAttribute(authorPageAttributeNameForFindByID, author2);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
@@ -183,12 +183,11 @@ public class AuthorController extends HttpServlet {
      */
     @Override
     public void init() throws ServletException {
-        // Get init params from web.xml
-//        driverClass = getServletContext().getInitParameter("db.driver.class");
-//        url = getServletContext().getInitParameter("db.url");
-//        userName = getServletContext().getInitParameter("db.username");
-//        password = getServletContext().getInitParameter("db.password");
-        //dbJndiName = getServletContext().getInitParameter("db.jndi.name");
+    // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authService = (AuthorService) ctx.getBean("authorService");
     }
 
 }
