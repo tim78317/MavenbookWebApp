@@ -55,6 +55,10 @@ public class AuthorService {
         author.getBookCollection().size();
         return author;
     }
+    
+    public List<Author> findAuthorByName(String name){
+        return  authorRepo.findAuthorByName(name);
+    }
 
     public Author findById(String id) {
         return authorRepo.findOne(new Integer(id));

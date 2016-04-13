@@ -23,7 +23,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-
 /**
  *
  * @author timothy
@@ -42,15 +41,14 @@ public class AuthorController extends HttpServlet {
     private static final String AUTHOR_NAME_FIELD = "authorNameField";
     private static final String ID_FIELD = "idField";
     private static final String GET_DETAILS = "getDetails";
-    
-    
+
 // When using Spring you cannot use @Inject because Spring has no
     // control over Servlets. Therefore you must have the Servlet ask
     // Spring for the object to inject
 //    @Inject
-    
     // DO THIS INSTEAD (see init() method):
     private AuthorService authService;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -66,18 +64,22 @@ public class AuthorController extends HttpServlet {
             throws ServletException, IOException, ClassNotFoundException, SQLException, Exception {
         response.setContentType("text/html;charset=UTF-8");
 
-       
-
         if (request.getParameter(DELETE_BUTTON) != null) {
             String id = request.getParameter(ID_CHECKBOX);
             authService.deleteAuthorById(id);
         } else if (request.getParameter(CREATE_AUTHOR_BTN) != null) {
             String authorName = request.getParameter(CREATE_AUTHOR);
-           authService.createNewAuthor(authorName);
+            authService.createNewAuthor(authorName);
         } else if (request.getParameter(UPDATE_AUTHOR_BTN) != null) {
             String authorName = request.getParameter(AUTHOR_NAME_FIELD);
             String id = request.getParameter(ID_FIELD);
             authService.updateAuthorById(id, authorName);
+        } else if (request.getParameter("searchByBtn") != null) {
+            String authorName = request.getParameter("searchByName");
+            List<Author> auth = authService.findAuthorByName(authorName);
+            request.setAttribute(authorPageAttributeName, auth);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
+            dispatcher.forward(request, response);
         }
 
         if (request.getParameter(GET_DETAILS) != null && request.getParameter(ID_CHECKBOX) != null) {
@@ -89,7 +91,7 @@ public class AuthorController extends HttpServlet {
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
             dispatcher.forward(request, response);
         } else {
-                HttpSession session = request.getSession();
+            HttpSession session = request.getSession();
             if (request.getParameter("welcomeNameAuthor") != null) {
                 String welcomeName = request.getParameter("welcomeNameAuthor");
                 String welcomeNameForSession = "Welcome " + welcomeName + ", On This Page You Can Add, Edit, Or Delete Authors.";
@@ -119,7 +121,6 @@ public class AuthorController extends HttpServlet {
 //            authService.getDao().initDao(ds);
 //        }
 //    }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -183,7 +184,7 @@ public class AuthorController extends HttpServlet {
      */
     @Override
     public void init() throws ServletException {
-    // Ask Spring for object to inject
+        // Ask Spring for object to inject
         ServletContext sctx = getServletContext();
         WebApplicationContext ctx
                 = WebApplicationContextUtils.getWebApplicationContext(sctx);

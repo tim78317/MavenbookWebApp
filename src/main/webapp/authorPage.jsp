@@ -59,6 +59,10 @@
                                 </div>
                             </div>		
                         </div>
+                        <div class="container">
+                            <input type="text" name="searchByName" id="searchByName" placeholder="Search By Author Name">
+                            <button type="submit" class="btn btn-default" id="searchByBtn" name="searchByBtn">Search By Name</button>
+                        </div>
                         <table id="" class="muffin table-bordered table-hover margin-bottom0 table">
                             <tr>
                                 <th>Select</th>
