@@ -74,13 +74,15 @@ public class AuthorController extends HttpServlet {
             String authorName = request.getParameter(AUTHOR_NAME_FIELD);
             String id = request.getParameter(ID_FIELD);
             authService.updateAuthorById(id, authorName);
-        } else if (request.getParameter("searchByBtn") != null) {
-            String authorName = request.getParameter("searchByName");
-            List<Author> auth = authService.findAuthorByName(authorName);
-            request.setAttribute(authorPageAttributeName, auth);
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
-            dispatcher.forward(request, response);
-        }
+        } 
+        
+//        if (request.getParameter("searchByBtn") != null) {
+//            String authorName = request.getParameter("searchByName");
+//            List<Author> auth = authService.findAuthorByName(authorName);
+//            request.setAttribute(authorPageAttributeName, auth);
+//            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(urlPathForAuthorPage);
+//            dispatcher.forward(request, response);
+//        }
 
         if (request.getParameter(GET_DETAILS) != null && request.getParameter(ID_CHECKBOX) != null) {
             String id = request.getParameter(ID_CHECKBOX);
