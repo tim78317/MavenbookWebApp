@@ -27,10 +27,10 @@
         <link href="resources/style/muffin-table.css" rel="stylesheet"> 
     </head>
     <body>
-        <jsp:include page="navbarforauthor.jsp"/>
+        <jsp:include page="/navbarforauthor.jsp"/>
 
         <h4>${welcomeNameForAuthorPage}</h4>
-        <form id="tableForm1" name="tableForm1" action="<%=response.encodeURL("BookController")%>" method="POST">
+        <form id="tableForm1" name="tableForm1" action="/controller/BookController" method="POST">
             <button type="sumbit" name="endSession" id="endSession">End Current Session</button>
             <div class="container-fluid">
                 <!-- main content -->

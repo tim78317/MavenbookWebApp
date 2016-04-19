@@ -56,7 +56,11 @@
         
         <sec:intercept-url pattern="/loginerror.jsp" 
                            access="isAnonymous()" requires-channel="https"/>
-
+        <sec:intercept-url             
+            pattern="/admin/**"             
+            access="hasAnyRole('ROLE_MGR')" 
+            requires-channel="https" />
+        
         <sec:intercept-url 
             pattern="/**" 
             access="hasAnyRole('ROLE_USER', 'ROLE_MGR')" requires-channel="https" />
@@ -68,6 +72,7 @@
             login-processing-url="/j_spring_security_check"
             login-page="/login.jsp" 
             default-target-url="/homePage.jsp"
+            authentication-success-handler-ref="myAuthenticationHandler"
             always-use-default-target="true"
             authentication-failure-url="/loginerror.jsp"/>
             
@@ -125,5 +130,6 @@
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
+    <bean id="myAuthenticationHandler" class="edu.wctc.tcl.bookwebapp.util.MyAuthenticationHandler" />
     <tx:annotation-driven />   
 </beans>

@@ -30,7 +30,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @WebServlet(name = "BookController", urlPatterns = {"/BookController"})
 public class BookController extends HttpServlet {
 
-    private static final String urlPathForBookPage = "/booksPage.jsp";
+    private static final String urlPathForBookPage = "/admin/booksPage.jsp";
     private static final String bookPageAttributeName = "books";
     private static final String bookPageAttributeNameForFindByID = "findBookById";
     private static final String DELETE_BUTTON = "delete";

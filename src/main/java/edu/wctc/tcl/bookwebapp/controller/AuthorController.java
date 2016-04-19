@@ -30,7 +30,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
 
-    private static final String urlPathForAuthorPage = "/authorPage.jsp";
+    private static final String urlPathForAuthorPage = "/admin/authorPage.jsp";
     private static final String authorPageAttributeName = "authors";
     private static final String authorPageAttributeNameForFindByID = "findAuthorById";
     private static final String DELETE_BUTTON = "delete";
