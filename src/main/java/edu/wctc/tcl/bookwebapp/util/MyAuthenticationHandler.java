@@ -23,7 +23,7 @@ public class MyAuthenticationHandler extends SimpleUrlAuthenticationSuccessHandl
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        final String USER_URL = "/index.jsp";
+        final String USER_URL = "/user/index.jsp";
         final String ADMIN_URL =  "/admin/homePage.jsp";
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         if (roles.contains("ROLE_MGR")) {

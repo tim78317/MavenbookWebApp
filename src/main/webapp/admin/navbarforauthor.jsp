@@ -17,11 +17,11 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="homePage.jsp">Book Web App</a>
+                            <a class="navbar-brand" href="<%=this.getServletContext().getContextPath()+ "/admin/homePage.jsp"%>">Book Web App</a>
                         </div>
                         <div id="navbar" class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
-                                <li class=""><a href="homePage.jsp">Home</a></li>
+                                <li class=""><a href="<%=this.getServletContext().getContextPath()+ "/admin/homePage.jsp"%>">Home</a></li>
                                 <li class="Active"><a href="#">Author Page</a></li>
                             </ul>
                         </div>

@@ -27,10 +27,10 @@
         <link href="resources/style/muffin-table.css" rel="stylesheet"> 
     </head>
     <body>
-       <jsp:include page="/navbarforauthor.jsp"/>
-        
+        <jsp:include page="navbarforauthor.jsp"/>
+
         <h4>${welcomeNameForAuthorPage}</h4>
-        <form id="tableForm1" name="tableForm1" action="/controller/AuthorController" method="POST">
+        <form id="tableForm1" name="tableForm1" action="<%=this.getServletContext().getContextPath() + "/AuthorController"%>" method="POST">
             <button type="sumbit" name="endSession" id="endSession">End Current Session</button>
             <div class="container-fluid">
                 <!-- main content -->
@@ -147,7 +147,10 @@
                     </div>
                 </div>
                 <!-- row end -->
-                <!-- end: main content -->     
+                <!-- end: main content -->   
+                <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
+                    <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
+                </sec:authorize>
             </div>
         </form>
         <!-- bootstrap -->
@@ -167,17 +170,17 @@
         <script>
 
             $(function () {
-            
-                
+
+
                 $("#draggable").draggable();
 
                 enableDisableEditModal();
 
-                  function enableDisableEditModal() {
-                      var test = $("#authorNameField").val();
-                   if(test !== ""){
-                       $("#forHidden").removeClass('hidden');
-                   } 
+                function enableDisableEditModal() {
+                    var test = $("#authorNameField").val();
+                    if (test !== "") {
+                        $("#forHidden").removeClass('hidden');
+                    }
                 }
 
                 $("#hiddenClose").click(function () {

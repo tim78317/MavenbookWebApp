@@ -12,6 +12,9 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>User Page</h1>
+          <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
+            <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
+        </sec:authorize>
     </body>
 </html>
