@@ -34,7 +34,7 @@
     remember, all of these params are global to your app and can be
     accessed from any JSP page or servlet, which may not be what you
     want. If not, see below. -->
-     <context-param>
+    <!-- <context-param>
         <param-name>db.driver.class</param-name>
         <param-value>com.mysql.jdbc.Driver</param-value>
     </context-param>
@@ -53,7 +53,7 @@
     <context-param>
         <param-name>db.jndi.name</param-name>
         <param-value>jdbc/book</param-value>
-    </context-param>
+    </context-param>-->
     <session-config>
         <session-timeout>
             30
